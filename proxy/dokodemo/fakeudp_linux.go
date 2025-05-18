@@ -12,7 +12,7 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-func FakeUDP(addr *net.UDPAddr, mark int) (net.PacketConn, error) {
+func FakeUDP(conn net.Conn, addr *net.UDPAddr, mark int) (net.PacketConn, error) {
 	var af int
 	var sockaddr syscall.Sockaddr
 

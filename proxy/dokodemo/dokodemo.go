@@ -172,7 +172,7 @@ func (d *DokodemoDoor) Process(ctx context.Context, network net.Network, conn st
 			if d.sockopt != nil {
 				mark = int(d.sockopt.Mark)
 			}
-			pConn, err := FakeUDP(addr, mark)
+			pConn, err := FakeUDP(inbound.Conn, addr, mark)
 			if err != nil {
 				return err
 			}
@@ -275,6 +275,7 @@ func (w *PacketWriter) WriteMultiBuffer(mb buf.MultiBuffer) error {
 			conn := w.conns[*b.UDP]
 			if conn == nil {
 				conn, err = FakeUDP(
+					w.conn.(net.Conn),
 					&net.UDPAddr{
 						IP:   b.UDP.Address.IP(),
 						Port: int(b.UDP.Port),

@@ -131,3 +131,7 @@ func (h *Hub) Addr() net.Addr {
 func (h *Hub) Receive() <-chan *udp.Packet {
 	return h.cache
 }
+
+func (h *Hub) Conn() *net.UDPConn {
+	return h.conn
+}

@@ -319,6 +319,7 @@ func (w *udpWorker) callback(b *buf.Buffer, source net.Destination, originalDest
 				Source:  source,
 				Gateway: net.UDPDestination(w.address, w.port),
 				Tag:     w.tag,
+				Conn:    w.hub.Conn(),
 			})
 			content := new(session.Content)
 			if w.sniffingConfig != nil {

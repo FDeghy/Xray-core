@@ -16,16 +16,15 @@ func RetrieveOriginalDest(oob []byte) net.Destination {
 	dest := net.Destination{}
 	port := binary.LittleEndian.Uint16(oob[:2])
 	buf := buf.FromBytes(oob[2:])
-	defer buf.Release()
 
 	for !buf.IsEmpty() {
 		cm := &windows.WSACMSGHDR{}
-		len := make([]byte, unsafe.Sizeof(cm.Len))
-		nRead, err := buf.Read(len)
+		lenCMSG := make([]byte, unsafe.Sizeof(cm.Len))
+		nRead, err := buf.Read(lenCMSG)
 		if err != nil {
 			return dest
 		}
-		cm.Len = uintptr(binary.LittleEndian.Uint16(len))
+		cm.Len = uintptr(binary.LittleEndian.Uint16(lenCMSG))
 		binary.Read(buf, binary.LittleEndian, &cm.Level)
 		binary.Read(buf, binary.LittleEndian, &cm.Type)
 		nRead += 8 // len cm.Level + cm.Type
@@ -50,5 +49,8 @@ func ReadUDPMsg(conn *net.UDPConn, payload []byte, oob []byte) (int, int, int, *
 	udpAddr, _ := net.ResolveUDPAddr(conn.LocalAddr().Network(), conn.LocalAddr().String())
 	binary.LittleEndian.PutUint16(oob[:2], uint16(udpAddr.Port))
 	n, oobn, flags, addr, err := conn.ReadMsgUDP(payload, oob[2:])
-	return n, oobn + 2, flags, addr, err
+	if oobn > 0 {
+		oobn += 2
+	}
+	return n, oobn, flags, addr, err
 }
