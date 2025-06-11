@@ -59,9 +59,9 @@ func (c *fakeUDPConn) WriteTo(p []byte, addr net.Addr) (int, error) {
 		binary.Write(oob, binary.LittleEndian, pktinf)
 	}
 
-	errors.LogInfo(context.Background(), "oob: ", hex.EncodeToString(oob.Bytes()))
-
-	if n, _, err := c.UDPConn.WriteMsgUDP(p, oob.Bytes(), addr.(*net.UDPAddr)); err == nil {
+	errors.LogInfo(context.Background(), "oob: ", hex.EncodeToString(oob.Bytes()), " localAddr: ", c.UDPConn.LocalAddr().String(), " srcIP: ", c.srcIP.String())
+	n, _, err := c.UDPConn.WriteMsgUDP(p, oob.Bytes(), addr.(*net.UDPAddr))
+	if err == nil {
 		return n, err
 	}
 
